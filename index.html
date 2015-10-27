@@ -69,18 +69,26 @@
       <p>Simply check <code>window.pointerPos.x()</code> and <code>window.pointerPos.y()</code> in your mousemove/touchmove event handler to find your input position:</p>
       <div class="row">
         <div class="six columns">
-          <p><code>pointerPos.x()</code>: <span id="drag-pos-x"></span></p>
+          <p><code>pointerPos.x()</code>: <span id="pos-x"></span></p>
         </div>
         <div class="six columns">
-          <p><code>pointerPos.y()</code>: <span id="drag-pos-y"></span></p>
+          <p><code>pointerPos.y()</code>: <span id="pos-y"></span></p>
         </div>
       </div>
       <div class="row">
         <div class="six columns">
-          <p><code>pointerPos.xPercent()</code>: <span id="drag-pos-x-percent"></span></p>
+          <p><code>pointerPos.xPercent()</code>: <span id="pos-x-percent"></span></p>
         </div>
         <div class="six columns">
-          <p><code>pointerPos.yPercent()</code>: <span id="drag-pos-y-percent"></span></p>
+          <p><code>pointerPos.yPercent()</code>: <span id="pos-y-percent"></span></p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="six columns">
+          <p><code>pointerPos.xDelta()</code>: <span id="drag-x-delta"></span></p>
+        </div>
+        <div class="six columns">
+          <p><code>pointerPos.yDelta()</code>: <span id="drag-y-delta"></span></p>
         </div>
       </div>
       <p>If you want to track your pointer within a specific element, pass an element into the same methods: <code>window.pointerPos.x(el)</code>:</p>
@@ -89,10 +97,10 @@
           <div class="crosshair-h"></div>
           <div class="crosshair-v"></div>
           <div>
-            Specific element relative position: <span id="drag-specific-pos-x"></span>, <span id="drag-specific-pos-y"></span>
+            Specific element relative position: <span id="specific-pos-x"></span>, <span id="specific-pos-y"></span>
           </div>
           <div>
-            Specific element relative percent: <span id="drag-specific-pos-x-percent"></span>, <span id="drag-specific-pos-y-percent"></span>
+            Specific element relative percent: <span id="specific-pos-x-percent"></span>, <span id="specific-pos-y-percent"></span>
           </div>
         </div>
       </div>
@@ -108,17 +116,19 @@
       var specificEntered = false;
 
       // log dragged state & distance
-      var outputTextPosX = document.getElementById('drag-pos-x');
-      var outputTextPosY = document.getElementById('drag-pos-y');
-      var outputTextPosXPercent = document.getElementById('drag-pos-x-percent');
-      var outputTextPosYPercent = document.getElementById('drag-pos-y-percent');
+      var outputTextPosX = document.getElementById('pos-x');
+      var outputTextPosY = document.getElementById('pos-y');
+      var outputTextPosXPercent = document.getElementById('pos-x-percent');
+      var outputTextPosYPercent = document.getElementById('pos-y-percent');
+      var outputTextXDelta = document.getElementById('drag-x-delta');
+      var outputTextYDelta = document.getElementById('drag-y-delta');
       var crossHairX = document.querySelector('body > .crosshair-h');
       var crossHairY = document.querySelector('body > .crosshair-v');
 
-      var outputTextSpecificPosX = document.getElementById('drag-specific-pos-x');
-      var outputTextSpecificPosY = document.getElementById('drag-specific-pos-y');
-      var outputTextSpecificPosXPercent = document.getElementById('drag-specific-pos-x-percent');
-      var outputTextSpecificPosYPercent = document.getElementById('drag-specific-pos-y-percent');
+      var outputTextSpecificPosX = document.getElementById('specific-pos-x');
+      var outputTextSpecificPosY = document.getElementById('specific-pos-y');
+      var outputTextSpecificPosXPercent = document.getElementById('specific-pos-x-percent');
+      var outputTextSpecificPosYPercent = document.getElementById('specific-pos-y-percent');
       var crossHairSpecificX = document.querySelector('#specific-el .crosshair-h');
       var crossHairSpecificY = document.querySelector('#specific-el .crosshair-v');
 
@@ -128,6 +138,8 @@
           outputTextPosY.innerHTML = window.pointerPos.y();
           outputTextPosXPercent.innerHTML = (window.pointerPos.xPercent()+"").substr(0,4);
           outputTextPosYPercent.innerHTML = (window.pointerPos.yPercent()+"").substr(0,4);
+          outputTextXDelta.innerHTML = window.pointerPos.xDelta();
+          outputTextYDelta.innerHTML = window.pointerPos.yDelta();
           crossHairX.style.top = window.pointerPos.y() + 'px';
           crossHairY.style.left = window.pointerPos.x() + 'px';
 
