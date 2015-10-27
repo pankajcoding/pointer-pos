@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PointerPos</title>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+    <meta content="no" name="imagetoolbar" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="stylesheet" href="./vendor/normalize.css">
+    <link rel="stylesheet" href="./vendor/skeleton.css">
+    <style>
+      html, body {
+        margin: 0px;
+        padding: 0px;
+        height: 100%;
+        background-color: #efefef;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      .container {
+        max-width: 660px;
+        width: 90%;
+        margin-top: 40px;
+      }
+      .crosshair-h {
+        position: fixed;
+        width: 100%;
+        height: 2px;
+        top: 0;
+        left: 0;
+        background: rgba(0,0,0,0.3);
+      }
+      .crosshair-v {
+        position: fixed;
+        width: 2px;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgba(0,0,0,0.1);
+      }
+      #specific-el {
+        transition: background 0.3s ease;
+        position: relative;
+        background: #fff;
+        padding: 30px;
+        overflow: hidden;
+      }
+      #specific-el .crosshair-h,
+      #specific-el .crosshair-v {
+        position: absolute;
+        background: rgba(127,0,0,0.3);
+      }
+      #specific-el.entered {
+        background: #ddd;
+      }
+      #specific-el.entered .crosshair-h,
+      #specific-el.entered .crosshair-v {
+        background: rgba(0,127,0,0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="crosshair-h"></div>
+    <div class="crosshair-v"></div>
+    <div class="container">
+      <h1>PointerPos</h1>
+      <h5>Sometimes you want to know where your pointer is.</h5>
+      <p>Do you ever want to know where your pointer is? Well we've got the microlibrary for you!</p>
+      <p>Simply check <code>window.pointerPos.x()</code> and <code>window.pointerPos.y()</code> in your mousemove/touchmove event handler to find your input position:</p>
+      <div class="row">
+        <div class="six columns">
+          <p><code>pointerPos.x()</code>: <span id="drag-pos-x"></span></p>
+        </div>
+        <div class="six columns">
+          <p><code>pointerPos.y()</code>: <span id="drag-pos-y"></span></p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="six columns">
+          <p><code>pointerPos.xPercent()</code>: <span id="drag-pos-x-percent"></span></p>
+        </div>
+        <div class="six columns">
+          <p><code>pointerPos.yPercent()</code>: <span id="drag-pos-y-percent"></span></p>
+        </div>
+      </div>
+      <p>If you want to track your pointer within a specific element, pass an element into the same methods: <code>window.pointerPos.x(el)</code>:</p>
+      <div class="row">
+        <div id="specific-el" class="twelve columns">
+          <div class="crosshair-h"></div>
+          <div class="crosshair-v"></div>
+          <div>
+            Specific element relative position: <span id="drag-specific-pos-x"></span>, <span id="drag-specific-pos-y"></span>
+          </div>
+          <div>
+            Specific element relative percent: <span id="drag-specific-pos-x-percent"></span>, <span id="drag-specific-pos-y-percent"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./pointer-pos.js"></script>
+    <script>
+      /////////////////////////////////////////////////////////////
+      // Demo code
+      /////////////////////////////////////////////////////////////
+
+      // specific element tracking
+      var specificEl = document.getElementById('specific-el');
+      var specificEntered = false;
+
+      // log dragged state & distance
+      var outputTextPosX = document.getElementById('drag-pos-x');
+      var outputTextPosY = document.getElementById('drag-pos-y');
+      var outputTextPosXPercent = document.getElementById('drag-pos-x-percent');
+      var outputTextPosYPercent = document.getElementById('drag-pos-y-percent');
+      var crossHairX = document.querySelector('body > .crosshair-h');
+      var crossHairY = document.querySelector('body > .crosshair-v');
+
+      var outputTextSpecificPosX = document.getElementById('drag-specific-pos-x');
+      var outputTextSpecificPosY = document.getElementById('drag-specific-pos-y');
+      var outputTextSpecificPosXPercent = document.getElementById('drag-specific-pos-x-percent');
+      var outputTextSpecificPosYPercent = document.getElementById('drag-specific-pos-y-percent');
+      var crossHairSpecificX = document.querySelector('#specific-el .crosshair-h');
+      var crossHairSpecificY = document.querySelector('#specific-el .crosshair-v');
+
+      var logUpdates = function() {
+        requestAnimationFrame(function() {
+          outputTextPosX.innerHTML = window.pointerPos.x();
+          outputTextPosY.innerHTML = window.pointerPos.y();
+          outputTextPosXPercent.innerHTML = (window.pointerPos.xPercent()+"").substr(0,4);
+          outputTextPosYPercent.innerHTML = (window.pointerPos.yPercent()+"").substr(0,4);
+          crossHairX.style.top = window.pointerPos.y() + 'px';
+          crossHairY.style.left = window.pointerPos.x() + 'px';
+
+          outputTextSpecificPosX.innerHTML = window.pointerPos.x(specificEl);
+          outputTextSpecificPosY.innerHTML = window.pointerPos.y(specificEl);
+          outputTextSpecificPosXPercent.innerHTML = (window.pointerPos.xPercent(specificEl)+"").substr(0,4);
+          outputTextSpecificPosYPercent.innerHTML = (window.pointerPos.yPercent(specificEl)+"").substr(0,4);
+          crossHairSpecificY.style.left = window.pointerPos.x(specificEl) + 'px';
+          crossHairSpecificX.style.top = window.pointerPos.y(specificEl) + 'px';
+
+          if(window.pointerPos.xPercent(specificEl) >= 0 && window.pointerPos.xPercent(specificEl) <= 1 && window.pointerPos.yPercent(specificEl) >= 0 && window.pointerPos.yPercent(specificEl) <= 1) {
+            if(specificEntered == false) {
+              specificEntered = true;
+              specificEl.classList.add('entered');
+            }
+          } else {
+            if(specificEntered == true) {
+              specificEntered = false;
+              specificEl.classList.remove('entered');
+            }
+          }
+        });
+      };
+
+      document.addEventListener('mousedown', logUpdates);
+      document.addEventListener('touchstart', logUpdates);
+      document.addEventListener('mousemove', logUpdates);
+      document.addEventListener('touchmove', logUpdates);
+    </script>
+  </body>
+</html>
