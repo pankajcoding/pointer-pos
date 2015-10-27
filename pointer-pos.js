@@ -1,11 +1,15 @@
 (function(){
 
   var _x = -1,
-      _y = -1;
+      _y = -1,
+      _lastX = -1,
+      _lastY = -1;
 
   var reset = function() {
     _x = -1;
     _y = -1;
+    _lastX = -1;
+    _lastY = -1;
   };
 
   /////////////////////////////////////////////////////////////
@@ -49,6 +53,15 @@
     return _y / window.innerHeight;
   };
 
+  pointerPos.xDelta = function() {
+    return (_lastX == -1) ? 0 : _x - _lastX;
+  };
+
+  pointerPos.yDelta = function() {
+    return (_lastY == -1) ? 0 : _y - _lastY;
+  };
+
+
   /////////////////////////////////////////////////////////////
   // Move listener
   /////////////////////////////////////////////////////////////
@@ -56,6 +69,8 @@
   var mouseX = 0;
   var mouseY = 0;
   function pointerMoved(x, y) {
+    _lastX = _x;
+    _lastY = _y;
     _x = x;
     _y = y;
   }
